@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHN 帶狀皰疹神經痛・臨床作戰學習群島 | 楊士杰醫師</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0b192c;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        /* 海洋波紋與網格背景 */
+        .ocean-bg {
+            background-color: #0f2537;
+            background-image: 
+                radial-gradient(circle at 50% 45%, rgba(245, 158, 11, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 20% 25%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 75%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+        }
+        /* 島嶼浮動動畫 */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes floatGolden {
+            0%, 100% { transform: translateY(0px) scale(1); filter: drop-shadow(0 0 18px rgba(245, 158, 11, 0.45)); }
+            50% { transform: translateY(-10px) scale(1.03); filter: drop-shadow(0 0 28px rgba(245, 158, 11, 0.8)); }
+        }
+        @keyframes dashFlow {
+            to { stroke-dashoffset: -40; }
+        }
+        .island-node {
+            animation: floatSlow 4.5s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .island-node:hover {
+            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.6));
+            transform: scale(1.04);
+        }
+        .golden-island-node {
+            animation: floatGolden 3.8s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sea-route {
+            stroke-dasharray: 8 6;
+            animation: dashFlow 2.5s linear infinite;
+        }
+        .golden-route {
+            stroke-dasharray: 10 5;
+            animation: dashFlow 1.5s linear infinite;
+        }
+        /* 自訂捲軸 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        /* 卡片發光特效 */
+        .gold-glow-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            box-shadow: 0 10px 30px -5px rgba(245, 158, 11, 0.2);
+        }
+    </style>
+</head>
+<body class="ocean-bg min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-slate-900">
+
+    <!-- 頂部導覽列 (戰情室風格 - 手機版高度精簡優化) -->
+    <header class="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-slate-700/80 px-3 sm:px-4 py-2 sm:py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <!-- 標題與講者 -->
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                <div class="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center shadow-inner border border-emerald-400/40 text-xl sm:text-2xl" title="台中榮總麻醉部吉祥物：沉思蛙醫師">
+                    🐸
+                </div>
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="text-[11px] text-emerald-300 font-medium truncate">台中榮總麻醉部 楊士杰醫師</span>
+                    </div>
+                    <h1 class="text-sm sm:text-xl font-black tracking-wide text-white truncate">
+                        帶狀皰疹神經痛 (PHN) 臨床防禦群島
+                    </h1>
+                </div>
+            </div>
+
+            <!-- 探索進度與快速焦點按鈕 -->
+            <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                <div class="hidden lg:flex flex-col items-end mr-2">
+                    <div class="flex items-center gap-2 text-xs text-slate-300 mb-1">
+                        <i class="fa-solid fa-compass text-amber-400"></i>
+                        <span>群島探索進度：<strong id="progress-text" class="text-amber-400">0 / 6</strong> 座島嶼</span>
+                    </div>
+                    <div class="w-36 h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                        <div id="progress-bar" class="h-full bg-gradient-to-r from-sky-400 via-amber-400 to-emerald-400 w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <button onclick="openIsland('island-3')" class="relative group overflow-hidden rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 p-[1px] shadow-lg shadow-amber-500/20 hover:shadow-amber-500/40 transition-all">
+                    <div class="bg-slate-900/90 group-hover:bg-slate-900/70 transition px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-[11px] flex items-center gap-1.5">
+                        <span class="flex h-2 w-2 relative">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        </span>
+                        <span class="text-xs sm:text-sm font-bold bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent">
+                            <span class="hidden sm:inline">核心武器：</span>Pregabalin 專島
+                        </span>
+                        <i class="fa-solid fa-crown text-amber-400 text-[11px]"></i>
+                    </div>
+                </button>
+
+                <button onclick="openQuizModal()" class="rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-200 flex items-center gap-1.5 transition" title="臨床實戰隨堂考">
+                    <i class="fa-solid fa-clipboard-check text-emerald-400"></i>
+                    <span class="hidden sm:inline">隨堂考</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主內容區：群島互動地圖 + 快速導航列 -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-2.5 sm:px-4 py-3 sm:py-6 flex flex-col justify-center">
+        
+        <!-- 頂部引導標語 -->
+        <div class="mb-3 sm:mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 bg-slate-900/70 border border-slate-800 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-3 backdrop-blur-sm">
+            <div class="flex items-center gap-2 text-xs sm:text-sm text-slate-300">
+                <span class="bg-sky-500/20 text-sky-400 p-1 sm:p-1.5 rounded-lg shrink-0"><i class="fa-solid fa-map-location-dot"></i></span>
+                <span>點擊地圖上的<strong>「六大戰略島嶼」</strong>，優先登陸中央<strong>「Pregabalin 核心樞紐」</strong>解鎖完整臨床攻略！</span>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-xs text-amber-300/90 shrink-0 font-medium">
+                <i class="fa-solid fa-star"></i>
+                <span>推薦優先登陸中央「臨床鎮痛核心樞紐」</span>
+            </div>
+        </div>
+
+        <!-- 互動式 SVG 政策學習群島地圖 (分設「手機直式全景圖」與「電腦寬螢幕全景圖」，徹底解決手機裁切與狹窄問題) -->
+        <div class="relative w-full bg-slate-950/60 rounded-2xl sm:rounded-3xl border border-slate-800/90 shadow-2xl overflow-hidden mb-4 sm:mb-6">
+            <!-- 海圖裝飾羅盤與格線標記 -->
+            <div class="hidden sm:flex absolute top-4 left-4 z-10 pointer-events-none flex-col gap-1">
+                <div class="text-xs font-mono text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded border border-slate-800">
+                    LAT: 24°10'N | LON: 120°39'E (TCVGH PAIN CLINIC)
+                </div>
+            </div>
+            <div class="absolute bottom-3 right-3 z-10 pointer-events-none hidden md:flex items-center gap-3 bg-slate-900/85 px-3 py-1.5 rounded-xl border border-slate-800 text-xs text-slate-400">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> 鎮痛核心樞紐</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block"></span> 病生理與診斷</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span> 介入與疫苗防線</span>
+            </div>
+
+            <!-- 【手機版專屬直式全景海圖】免左右滑動，一覽無遺 -->
+            <div class="block md:hidden w-full">
+                <svg viewBox="0 0 680 860" class="w-full h-auto select-none">
+                    <defs>
+                        <radialGradient id="goldAuraMobile" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.45"/>
+                            <stop offset="65%" stop-color="#d97706" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+                        </radialGradient>
+                        <filter id="dropShadowM" x="-10%" y="-10%" width="120%" height="120%">
+                            <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#000000" flood-opacity="0.55"/>
+                        </filter>
+                    </defs>
+
+                    <!-- 背景光暈 -->
+                    <ellipse cx="340" cy="405" rx="260" ry="155" fill="url(#goldAuraMobile)" />
+
+                    <!-- 航線連接 (Mobile Sea Routes) -->
+                    <path d="M 175 180 Q 250 280 310 340" fill="none" stroke="#fbbf24" stroke-width="4" class="golden-route" opacity="0.85"/>
+                    <path d="M 505 180 Q 430 280 370 340" fill="none" stroke="#fbbf24" stroke-width="4" class="golden-route" opacity="0.85"/>
+                    <path d="M 310 450 Q 240 530 175 610" fill="none" stroke="#fbbf24" stroke-width="4" class="golden-route" opacity="0.85"/>
+                    <path d="M 370 450 Q 440 530 505 610" fill="none" stroke="#fbbf24" stroke-width="4" class="golden-route" opacity="0.85"/>
+                    <path d="M 175 650 Q 250 730 310 770" fill="none" stroke="#34d399" stroke-width="3.5" class="sea-route" opacity="0.7"/>
+                    <path d="M 505 650 Q 430 730 370 770" fill="none" stroke="#34d399" stroke-width="3.5" class="sea-route" opacity="0.7"/>
+
+                    <!-- 島嶼 1 (左上)：潛伏之島 -->
+                    <g class="island-node" onclick="openIsland('island-1')" filter="url(#dropShadowM)">
+                        <path d="M 65 145 C 55 105, 100 80, 175 82 C 245 80, 285 105, 275 145 C 268 175, 230 190, 175 188 C 110 190, 72 170, 65 145 Z" fill="#1e3a5f" stroke="#38bdf8" stroke-width="3"/>
+                        <circle cx="175" cy="112" r="24" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                        <text x="175" y="121" text-anchor="middle" font-size="24">🦠</text>
+                        <rect x="45" y="148" width="260" height="58" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                        <text x="175" y="171" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold">01・病因與高危群</text>
+                        <text x="175" y="195" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="900">潛伏之島：水痘之鬼</text>
+                    </g>
+
+                    <!-- 島嶼 2 (右上)：偽裝迷霧島 -->
+                    <g class="island-node" onclick="openIsland('island-2')" filter="url(#dropShadowM)">
+                        <path d="M 405 145 C 395 105, 440 80, 505 82 C 575 80, 615 105, 605 145 C 598 175, 560 190, 505 188 C 440 190, 412 170, 405 145 Z" fill="#4c1d95" stroke="#f43f5e" stroke-width="3"/>
+                        <circle cx="505" cy="112" r="24" fill="#0f172a" stroke="#f43f5e" stroke-width="2.5"/>
+                        <text x="505" y="121" text-anchor="middle" font-size="24">⚡</text>
+                        <rect x="375" y="148" width="260" height="58" rx="12" fill="#0f172a" stroke="#f43f5e" stroke-width="2"/>
+                        <text x="505" y="171" text-anchor="middle" fill="#fb7185" font-size="14" font-weight="bold">02・張震嶽案例與急性期</text>
+                        <text x="505" y="195" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="900">偽裝迷霧：黃金72hr</text>
+                    </g>
+
+                    <!-- 島嶼 3 (正中央大島)：Pregabalin (Lyrica) 臨床鎮痛核心樞紐 -->
+                    <g class="golden-island-node" onclick="openIsland('island-3')">
+                        <ellipse cx="340" cy="390" rx="210" ry="118" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="8 5" opacity="0.8"/>
+                        <path d="M 155 385 C 145 315, 225 275, 340 278 C 455 275, 535 315, 525 385 C 515 440, 440 465, 340 465 C 240 465, 165 440, 155 385 Z" fill="#78350f" stroke="#fbbf24" stroke-width="5"/>
+                        <path d="M 180 378 C 172 325, 240 292, 340 295 C 440 292, 508 325, 500 378 C 490 422, 425 442, 340 442 C 255 442, 190 422, 180 378 Z" fill="#b45309"/>
+                        <polygon points="270,365 340,285 410,365" fill="#f59e0b" stroke="#fef08a" stroke-width="2"/>
+                        <!-- 頂部皇冠徽章 -->
+                        <rect x="220" y="242" width="240" height="34" rx="17" fill="#fbbf24" stroke="#ffffff" stroke-width="2"/>
+                        <text x="340" y="265" text-anchor="middle" fill="#0f172a" font-size="16" font-weight="900">👑 臨床鎮痛核心樞紐</text>
+                        <!-- 中心膠囊圖標 -->
+                        <circle cx="340" cy="340" r="34" fill="#0f172a" stroke="#fde047" stroke-width="3.5"/>
+                        <text x="340" y="352" text-anchor="middle" font-size="32">💊</text>
+                        <!-- 黃金主標題牌 -->
+                        <rect x="130" y="392" width="420" height="76" rx="18" fill="#0f172a" stroke="#fbbf24" stroke-width="4"/>
+                        <text x="340" y="420" text-anchor="middle" fill="#fcd34d" font-size="16" font-weight="bold">ISLAND 03・α2-δ 親和力 6 倍霸主</text>
+                        <text x="340" y="451" text-anchor="middle" fill="#ffffff" font-size="24" font-weight="900">Pregabalin (Lyrica) 核心樞紐</text>
+                        <!-- 三大動漫彩蛋小標籤 -->
+                        <g transform="translate(160, 476)">
+                            <rect x="0" y="0" width="112" height="28" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5"/>
+                            <text x="56" y="19" text-anchor="middle" fill="#fde68a" font-size="14" font-weight="bold">🕵️‍♂️ 柯南健保</text>
+                            <rect x="122" y="0" width="116" height="28" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+                            <text x="180" y="19" text-anchor="middle" fill="#bae6fd" font-size="14" font-weight="bold">🔔 哆啦零交互</text>
+                            <rect x="248" y="0" width="112" height="28" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="1.5"/>
+                            <text x="304" y="19" text-anchor="middle" fill="#fecdd3" font-size="14" font-weight="bold">🖍️ 小新腎劑量</text>
+                        </g>
+                    </g>
+
+                    <!-- 島嶼 4 (左下)：藥物迷宮島 -->
+                    <g class="island-node" onclick="openIsland('island-5')" filter="url(#dropShadowM)">
+                        <path d="M 65 605 C 55 565, 100 540, 175 542 C 245 540, 285 565, 275 605 C 268 635, 230 650, 175 648 C 110 650, 72 630, 65 605 Z" fill="#3b0764" stroke="#c084fc" stroke-width="3"/>
+                        <circle cx="175" cy="572" r="24" fill="#0f172a" stroke="#c084fc" stroke-width="2.5"/>
+                        <text x="175" y="581" text-anchor="middle" font-size="22">⚖️</text>
+                        <rect x="45" y="608" width="260" height="58" rx="12" fill="#0f172a" stroke="#c084fc" stroke-width="2"/>
+                        <text x="175" y="631" text-anchor="middle" fill="#d8b4fe" font-size="14" font-weight="bold">04・疼痛分類與階梯</text>
+                        <text x="175" y="655" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="900">藥物迷宮：協同策略</text>
+                    </g>
+
+                    <!-- 島嶼 5 (右下)：滑雪道與阻斷島 -->
+                    <g class="island-node" onclick="openIsland('island-4')" filter="url(#dropShadowM)">
+                        <path d="M 405 605 C 395 565, 440 540, 505 542 C 575 540, 615 565, 605 605 C 598 635, 560 650, 505 648 C 440 650, 412 630, 405 605 Z" fill="#0369a1" stroke="#38bdf8" stroke-width="3"/>
+                        <circle cx="505" cy="572" r="24" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                        <text x="505" y="581" text-anchor="middle" font-size="22">⛷️</text>
+                        <rect x="375" y="608" width="260" height="58" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                        <text x="505" y="631" text-anchor="middle" fill="#7dd3fc" font-size="14" font-weight="bold">05・中樞敏感化與阻斷</text>
+                        <text x="505" y="655" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="900">滑雪道島：SGB & PVB</text>
+                    </g>
+
+                    <!-- 島嶼 6 (正下方)：炎柱免疫防禦堡壘 -->
+                    <g class="island-node" onclick="openIsland('island-6')" filter="url(#dropShadowM)">
+                        <path d="M 215 775 C 205 738, 255 715, 340 718 C 425 715, 475 738, 465 775 C 458 805, 415 820, 340 818 C 265 820, 222 805, 215 775 Z" fill="#047857" stroke="#10b981" stroke-width="3"/>
+                        <circle cx="340" cy="742" r="24" fill="#0f172a" stroke="#10b981" stroke-width="2.5"/>
+                        <text x="340" y="751" text-anchor="middle" font-size="22">🔥</text>
+                        <rect x="190" y="778" width="300" height="58" rx="12" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+                        <text x="340" y="801" text-anchor="middle" fill="#6ee7b7" font-size="14" font-weight="bold">06・煉獄杏壽郎的終極防線</text>
+                        <text x="340" y="825" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="900">免疫防禦島：疫苗對決與總結</text>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- 【電腦與平板版 16:9 寬螢幕海圖】 -->
+            <div class="hidden md:block w-full overflow-x-auto">
+                <div class="min-w-[820px] w-full aspect-[16/9] max-h-[600px] mx-auto relative">
+                    <svg viewBox="0 0 1200 660" class="w-full h-full select-none">
+                        <defs>
+                            <!-- 黃金島發光漸層 -->
+                            <radialGradient id="goldAura" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.45"/>
+                                <stop offset="60%" stop-color="#d97706" stop-opacity="0.15"/>
+                                <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+                            </radialGradient>
+                            <!-- 島嶼陰影 -->
+                            <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
+                                <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+                            </filter>
+                        </defs>
+
+                        <!-- 海洋深淺環礁裝飾 -->
+                        <ellipse cx="600" cy="340" rx="230" ry="145" fill="url(#goldAura)" />
+                        <circle cx="230" cy="190" r="115" fill="#0ea5e9" fill-opacity="0.06" />
+                        <circle cx="240" cy="490" r="115" fill="#f43f5e" fill-opacity="0.06" />
+                        <circle cx="960" cy="175" r="115" fill="#a855f7" fill-opacity="0.06" />
+                        <circle cx="960" cy="485" r="115" fill="#10b981" fill-opacity="0.06" />
+                        <circle cx="600" cy="560" r="105" fill="#38bdf8" fill-opacity="0.06" />
+
+                        <!-- 航線連接 (Sea Routes) -->
+                        <path d="M 230 230 Q 190 340 235 450" fill="none" stroke="#38bdf8" stroke-width="3" class="sea-route" opacity="0.6"/>
+                        <path d="M 290 475 Q 430 430 530 355" fill="none" stroke="#fbbf24" stroke-width="4" class="golden-route" opacity="0.9"/>
+                        <path d="M 290 200 Q 430 240 530 310" fill="none" stroke="#fbbf24" stroke-width="3.5" class="golden-route" opacity="0.8"/>
+                        <path d="M 670 355 Q 810 420 900 470" fill="none" stroke="#fbbf24" stroke-width="4" class="golden-route" opacity="0.9"/>
+                        <path d="M 670 305 Q 810 230 900 185" fill="none" stroke="#fbbf24" stroke-width="3.5" class="golden-route" opacity="0.85"/>
+                        <path d="M 900 500 Q 760 565 660 565" fill="none" stroke="#34d399" stroke-width="3" class="sea-route" opacity="0.6"/>
+                        <path d="M 290 510 Q 430 565 540 565" fill="none" stroke="#34d399" stroke-width="3" class="sea-route" opacity="0.6"/>
+
+                        <!-- ================= 島嶼 1：潛伏之島 ================= -->
+                        <g class="island-node" onclick="openIsland('island-1')" filter="url(#dropShadow)">
+                            <path d="M 135 205 C 125 165, 165 130, 225 135 C 285 130, 330 160, 320 205 C 315 235, 275 250, 225 248 C 170 250, 140 230, 135 205 Z" fill="#1e3a5f" stroke="#38bdf8" stroke-width="3"/>
+                            <path d="M 150 195 C 145 165, 180 142, 225 145 C 275 142, 305 165, 302 195 C 295 218, 265 230, 225 228 C 180 230, 155 215, 150 195 Z" fill="#0f766e"/>
+                            <polygon points="195,185 225,135 255,185" fill="#14b8a6" opacity="0.8"/>
+                            <polygon points="170,195 195,155 220,195" fill="#0d9488"/>
+                            <circle cx="225" cy="165" r="24" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                            <text x="225" y="174" text-anchor="middle" font-size="24">🦠</text>
+                            <rect x="125" y="210" width="200" height="52" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                            <text x="225" y="232" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">ISLAND 01・病因與流行病學</text>
+                            <text x="225" y="252" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="900">潛伏之島：水痘之鬼甦醒</text>
+                            <circle id="badge-island-1" cx="315" cy="210" r="12" fill="#10b981" class="hidden"/>
+                            <text id="check-island-1" x="315" y="215" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold" class="hidden">✓</text>
+                        </g>
+
+                        <!-- ================= 島嶼 2：偽裝迷霧島 ================= -->
+                        <g class="island-node" onclick="openIsland('island-2')" filter="url(#dropShadow)" style="animation-delay: -1.2s;">
+                            <path d="M 135 475 C 125 435, 170 405, 230 410 C 290 405, 335 435, 325 475 C 318 505, 280 520, 230 518 C 175 520, 142 500, 135 475 Z" fill="#4c1d95" stroke="#f43f5e" stroke-width="3"/>
+                            <path d="M 152 468 C 145 440, 180 418, 230 420 C 280 418, 310 440, 305 468 C 300 490, 270 502, 230 500 C 185 502, 158 488, 152 468 Z" fill="#881337"/>
+                            <circle cx="230" cy="435" r="24" fill="#0f172a" stroke="#f43f5e" stroke-width="2.5"/>
+                            <text x="230" y="444" text-anchor="middle" font-size="23">⚡</text>
+                            <rect x="120" y="480" width="220" height="52" rx="12" fill="#0f172a" stroke="#f43f5e" stroke-width="2"/>
+                            <text x="230" y="502" text-anchor="middle" fill="#fb7185" font-size="13" font-weight="bold">ISLAND 02・張震嶽案例與急性期</text>
+                            <text x="230" y="522" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="900">偽裝迷霧島：黃金72小時</text>
+                            <circle id="badge-island-2" cx="330" cy="480" r="12" fill="#10b981" class="hidden"/>
+                            <text id="check-island-2" x="330" y="485" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold" class="hidden">✓</text>
+                        </g>
+
+                        <!-- ================= 島嶼 3：Pregabalin 臨床鎮痛核心樞紐 ================= -->
+                        <g class="golden-island-node" onclick="openIsland('island-3')">
+                            <ellipse cx="600" cy="320" rx="155" ry="98" fill="none" stroke="#fbbf24" stroke-width="2" stroke-dasharray="6 4" opacity="0.75"/>
+                            <path d="M 455 320 C 445 255, 510 215, 600 220 C 690 215, 755 255, 745 320 C 735 370, 680 395, 600 395 C 520 395, 465 370, 455 320 Z" fill="#78350f" stroke="#fbbf24" stroke-width="4.5"/>
+                            <path d="M 475 312 C 468 262, 525 230, 600 234 C 675 230, 732 262, 725 312 C 718 352, 668 372, 600 372 C 532 372, 482 352, 475 312 Z" fill="#b45309"/>
+                            <polygon points="540,295 600,225 660,295" fill="#f59e0b" stroke="#fef08a" stroke-width="1.5"/>
+                            <polygon points="505,310 545,260 585,310" fill="#d97706"/>
+                            <polygon points="615,310 655,260 695,310" fill="#d97706"/>
+                            <!-- 頂部徽章 (已移除 First-line) -->
+                            <rect x="515" y="182" width="170" height="28" rx="14" fill="#fbbf24" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="600" y="201" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="900">👑 臨床鎮痛核心樞紐</text>
+                            <circle cx="600" cy="278" r="32" fill="#0f172a" stroke="#fde047" stroke-width="3.5"/>
+                            <text x="600" y="289" text-anchor="middle" font-size="30">💊</text>
+                            <rect x="450" y="330" width="300" height="70" rx="16" fill="#0f172a" stroke="#fbbf24" stroke-width="3.5"/>
+                            <text x="600" y="355" text-anchor="middle" fill="#fcd34d" font-size="14" font-weight="bold">ISLAND 03・α2-δ 親和力 6 倍霸主</text>
+                            <text x="600" y="381" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="900">Pregabalin (Lyrica) 核心樞紐</text>
+                            <g transform="translate(475, 408)">
+                                <rect x="0" y="0" width="80" height="22" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1"/>
+                                <text x="40" y="15" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="bold">🕵️‍♂️ 柯南健保</text>
+                                <rect x="85" y="0" width="85" height="22" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1"/>
+                                <text x="127" y="15" text-anchor="middle" fill="#bae6fd" font-size="11" font-weight="bold">🔔 哆啦零交互</text>
+                                <rect x="175" y="0" width="80" height="22" rx="6" fill="#1e293b" stroke="#f43f5e" stroke-width="1"/>
+                                <text x="215" y="15" text-anchor="middle" fill="#fecdd3" font-size="11" font-weight="bold">🖍️ 小新腎劑量</text>
+                            </g>
+                            <circle id="badge-island-3" cx="740" cy="330" r="14" fill="#10b981" class="hidden"/>
+                            <text id="check-island-3" x="740" y="335" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold" class="hidden">✓</text>
+                        </g>
+
+                        <!-- ================= 島嶼 5：藥物迷宮島 ================= -->
+                        <g class="island-node" onclick="openIsland('island-5')" filter="url(#dropShadow)" style="animation-delay: -2.4s;">
+                            <path d="M 865 185 C 855 145, 900 115, 960 120 C 1020 115, 1065 145, 1055 185 C 1048 215, 1010 230, 960 228 C 905 230, 872 210, 865 185 Z" fill="#3b0764" stroke="#c084fc" stroke-width="3"/>
+                            <path d="M 882 178 C 875 150, 910 128, 960 130 C 1010 128, 1040 150, 1035 178 C 1030 200, 1000 212, 960 210 C 915 212, 888 198, 882 178 Z" fill="#581c87"/>
+                            <circle cx="960" cy="148" r="24" fill="#0f172a" stroke="#c084fc" stroke-width="2.5"/>
+                            <text x="960" y="157" text-anchor="middle" font-size="22">⚖️</text>
+                            <rect x="850" y="192" width="220" height="52" rx="12" fill="#0f172a" stroke="#c084fc" stroke-width="2"/>
+                            <text x="960" y="214" text-anchor="middle" fill="#d8b4fe" font-size="13" font-weight="bold">ISLAND 04・疼痛分類與治療階梯</text>
+                            <text x="960" y="234" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="900">藥物迷宮島：多模式協同策略</text>
+                            <circle id="badge-island-5" cx="1060" cy="192" r="12" fill="#10b981" class="hidden"/>
+                            <text id="check-island-5" x="1060" y="197" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold" class="hidden">✓</text>
+                        </g>
+
+                        <!-- ================= 島嶼 4：滑雪道與神經阻斷島 ================= -->
+                        <g class="island-node" onclick="openIsland('island-4')" filter="url(#dropShadow)" style="animation-delay: -0.7s;">
+                            <path d="M 865 475 C 855 435, 900 405, 960 410 C 1020 405, 1065 435, 1055 475 C 1048 505, 1010 520, 960 518 C 905 520, 872 500, 865 475 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+                            <path d="M 882 468 C 875 440, 910 418, 960 420 C 1010 418, 1040 440, 1035 468 C 1030 490, 1000 502, 960 500 C 915 502, 888 488, 882 468 Z" fill="#0369a1"/>
+                            <polygon points="920,460 960,405 1000,460" fill="#e0f2fe" opacity="0.9"/>
+                            <circle cx="960" cy="435" r="24" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                            <text x="960" y="444" text-anchor="middle" font-size="22">⛷️</text>
+                            <rect x="845" y="480" width="230" height="52" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                            <text x="960" y="502" text-anchor="middle" fill="#7dd3fc" font-size="13" font-weight="bold">ISLAND 05・中樞敏感化與介入阻斷</text>
+                            <text x="960" y="522" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="900">滑雪道之島：SGB & PVB 阻斷術</text>
+                            <circle id="badge-island-4" cx="1065" cy="480" r="12" fill="#10b981" class="hidden"/>
+                            <text id="check-island-4" x="1065" y="485" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold" class="hidden">✓</text>
+                        </g>
+
+                        <!-- ================= 島嶼 6：免疫防禦堡壘 ================= -->
+                        <g class="island-node" onclick="openIsland('island-6')" filter="url(#dropShadow)" style="animation-delay: -1.8s;">
+                            <path d="M 495 555 C 485 520, 530 495, 600 498 C 670 495, 715 520, 705 555 C 698 585, 660 600, 600 598 C 540 600, 502 585, 495 555 Z" fill="#064e3b" stroke="#10b981" stroke-width="3"/>
+                            <path d="M 512 550 C 505 525, 545 508, 600 510 C 655 508, 695 525, 688 550 C 680 572, 645 585, 600 585 C 555 585, 520 572, 512 550 Z" fill="#047857"/>
+                            <circle cx="600" cy="522" r="24" fill="#0f172a" stroke="#10b981" stroke-width="2.5"/>
+                            <text x="600" y="531" text-anchor="middle" font-size="22">🔥</text>
+                            <rect x="485" y="562" width="230" height="52" rx="12" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+                            <text x="600" y="584" text-anchor="middle" fill="#6ee7b7" font-size="13" font-weight="bold">ISLAND 06・煉獄杏壽郎的終極防線</text>
+                            <text x="600" y="604" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="900">免疫防禦島：疫苗對決與總結</text>
+                            <circle id="badge-island-6" cx="705" cy="562" r="12" fill="#10b981" class="hidden"/>
+                            <text id="check-island-6" x="705" y="567" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold" class="hidden">✓</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部快速島嶼卡片列表 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+            <button onclick="openIsland('island-1')" class="text-left p-3.5 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-sky-400 transition flex flex-col justify-between group">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">01 潛伏之島</span>
+                    <span class="text-lg group-hover:scale-110 transition">🦠</span>
+                </div>
+                <div class="font-bold text-sm text-white mb-1">病因與高風險群</div>
+                <p class="text-xs text-slate-400">背根神經節潛伏、95%成人得過水痘、每3人有1人發病</p>
+            </button>
+
+            <button onclick="openIsland('island-2')" class="text-left p-3.5 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-rose-400 transition flex flex-col justify-between group">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">02 偽裝迷霧島</span>
+                    <span class="text-lg group-hover:scale-110 transition">⚡</span>
+                </div>
+                <div class="font-bold text-sm text-white mb-1">張震嶽案例與72hr</div>
+                <p class="text-xs text-slate-400">痛覺超敏、誤診盲腸炎/椎間盤、抗病毒藥決策樹與民俗禁忌</p>
+            </button>
+
+            <!-- 黃金主卡片 (3號島) -->
+            <button onclick="openIsland('island-3')" class="text-left p-3.5 rounded-2xl gold-glow-card hover:scale-[1.02] transition flex flex-col justify-between group lg:col-span-2 relative overflow-hidden">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/20 rounded-full blur-xl pointer-events-none"></div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-xs font-black text-slate-950 bg-gradient-to-r from-amber-300 to-yellow-500 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                        <i class="fa-solid fa-crown"></i> 03 臨床鎮痛核心樞紐 (核心焦點)
+                    </span>
+                    <span class="text-xs font-bold text-amber-300">Lyrica 專區 💊</span>
+                </div>
+                <div class="font-black text-base text-amber-200 mb-1">Pregabalin (Lyrica)：神經痛標竿武器</div>
+                <p class="text-xs text-slate-200">α2-δ 親和力高出 6 倍、生體可用率 &gt;90%、不經肝臟 CYP450 零交互作用！內含柯南健保、哆啦A夢與小新腎劑量互動器</p>
+            </button>
+
+            <button onclick="openIsland('island-5')" class="text-left p-3.5 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-purple-400 transition flex flex-col justify-between group">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">04 藥物迷宮島</span>
+                    <span class="text-lg group-hover:scale-110 transition">⚖️</span>
+                </div>
+                <div class="font-bold text-sm text-white mb-1">疼痛分類與協同治療</div>
+                <p class="text-xs text-slate-400">為何傳統止痛藥無效？解析 Pregabalin 與 TCA 的雙機轉互補併用與用藥安全</p>
+            </button>
+
+            <button onclick="openIsland('island-4')" class="text-left p-3.5 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-sky-400 transition flex flex-col justify-between group">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">05 滑雪道與阻斷島</span>
+                    <span class="text-lg group-hover:scale-110 transition">⛷️</span>
+                </div>
+                <div class="font-bold text-sm text-white mb-1">填平雪道：SGB/PVB</div>
+                <p class="text-xs text-slate-400">中樞敏感化滑雪道理論、超音波導引 SGB 與 PVB 最新實證解析</p>
+            </button>
+        </div>
+    </main>
+
+    <!-- 島嶼詳情彈出視窗 -->
+    <div id="island-modal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 md:p-6">
+        <div class="bg-slate-900 border-0 sm:border border-slate-700 rounded-none sm:rounded-3xl max-w-5xl w-full h-full sm:h-auto sm:max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-fadeIn">
+            
+            <div id="modal-header" class="px-3.5 py-2.5 sm:px-6 sm:py-4 border-b border-slate-800 flex items-center justify-between gap-2 bg-slate-900/95 shrink-0">
+                <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <span id="modal-icon" class="text-xl sm:text-3xl shrink-0">🏝️</span>
+                    <div class="min-w-0 flex-1">
+                        <span id="modal-subtitle" class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-sky-400 truncate">ISLAND</span>
+                        <h2 id="modal-title" class="text-sm sm:text-2xl font-black text-white leading-snug line-clamp-1 sm:line-clamp-none">島嶼標題</h2>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition text-base sm:text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="modal-content" class="p-3.5 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 text-slate-200 leading-relaxed flex-1">
+            </div>
+
+            <div class="px-3.5 py-2 sm:px-6 sm:py-3.5 bg-slate-950 border-t border-slate-800 flex items-center justify-between gap-2 shrink-0">
+                <div class="hidden md:flex text-xs text-slate-400 items-center gap-2">
+                    <span>🐸 楊士杰醫師臨床筆記：</span>
+                    <span id="modal-footer-tip" class="text-slate-300 font-medium">早期診斷與精準神經痛控制是避免慢性疼痛的關鍵。</span>
+                </div>
+                <div class="flex items-center justify-between md:justify-end gap-2 w-full md:w-auto">
+                    <button id="btn-prev-island" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition flex items-center">
+                        <i class="fa-solid fa-arrow-left mr-1.5"></i> 上一座島
+                    </button>
+                    <button onclick="closeModal()" class="md:hidden px-3 py-1.5 rounded-xl bg-slate-800/80 text-xs font-bold text-slate-400">
+                        返回海圖
+                    </button>
+                    <button id="btn-next-island" class="px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white transition flex items-center">
+                        下一座島 <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 隨堂考 Modal -->
+    <div id="quiz-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🐸</span>
+                    <div>
+                        <span class="text-xs font-bold text-emerald-400">PAIN CLINIC MASTER CHALLENGE</span>
+                        <h3 class="text-lg font-black text-white">PHN 疼痛門診實戰隨堂測驗</h3>
+                    </div>
+                </div>
+                <button onclick="closeQuizModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="quiz-body" class="p-6 overflow-y-auto space-y-5 flex-1">
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁尾 -->
+    <footer class="bg-slate-950/90 border-t border-slate-800/80 px-4 py-3 text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <span class="text-emerald-400 font-bold">臺中榮民總醫院 麻醉部</span>
+                <span>｜</span>
+                <span>報告人：楊士杰 醫師</span>
+                <span class="hidden md:inline">｜</span>
+                <span class="hidden md:inline text-slate-500">Climbing Taipei 101 Spirit - 暉致為臨床疼痛照護加油</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="openIsland('island-6')" class="hover:text-emerald-400 underline transition">查看島嶼 06：免疫防禦與疫苗專區</button>
+                <span class="text-amber-400/90 font-semibold">★ 臨床神經痛精準照護互動指南</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const visitedIslands = new Set();
+        const islandOrder = ['island-1', 'island-2', 'island-3', 'island-5', 'island-4', 'island-6'];
+
+        const islandsData = {
+            'island-1': {
+                icon: '🦠',
+                subtitle: 'ISLAND 01 ・ 病因與流行病學 (Pages 4-5)',
+                title: '潛伏之島：背根神經節裡的「水痘之鬼」',
+                headerClass: 'border-sky-500/40 bg-gradient-to-r from-slate-900 via-sky-950/40 to-slate-900',
+                footerTip: '台灣 50 歲以上成人高達 95% 曾感染水痘，每 3 人就有 1 人終生會發作帶狀皰疹！',
+                content: `
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-800/70 border border-sky-500/30 rounded-2xl p-4 text-center">
+                            <div class="text-3xl font-black text-sky-400 mb-1">95% <span class="text-sm font-normal text-slate-300">(838萬人)</span></div>
+                            <div class="text-xs font-bold text-white mb-1">台灣 50 歲以上水痘感染率</div>
+                            <p class="text-xs text-slate-400">全數具備帶狀皰疹復發風險，全台一年約新增 12 萬名患者</p>
+                        </div>
+                        <div class="bg-slate-800/70 border border-amber-500/30 rounded-2xl p-4 text-center">
+                            <div class="text-3xl font-black text-amber-400 mb-1">1 / 3 <span class="text-sm font-normal text-slate-300">(約20~33%)</span></div>
+                            <div class="text-xs font-bold text-white mb-1">終生帶狀皰疹發病風險</div>
+                            <p class="text-xs text-slate-400">且發作過一次並不會終生免疫，反而有再次復發的可能！</p>
+                        </div>
+                        <div class="bg-slate-800/70 border border-rose-500/30 rounded-2xl p-4 text-center">
+                            <div class="text-3xl font-black text-rose-400 mb-1">3.4 倍</div>
+                            <div class="text-xs font-bold text-white mb-1">≥50 歲 vs &lt;50 歲發病風險</div>
+                            <p class="text-xs text-slate-400">60 歲以上長者一旦發病，約 <strong class="text-rose-300">30%</strong> 會併發慢性皰疹後神經痛 (PHN)</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-5">
+                        <h3 class="text-base font-black text-sky-300 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-dna"></i> 水痘帶狀皰疹病毒 (VZV) 的潛伏與復發機轉
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
+                            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700">
+                                <span class="text-xs font-bold px-2 py-0.5 bg-sky-500/20 text-sky-300 rounded">STEP 1 初次感染</span>
+                                <h4 class="font-bold text-white mt-2 mb-1">全身水痘擴散</h4>
+                                <p class="text-xs text-slate-300">水痘病毒首次進入身體後先在淋巴結複製，接著侵犯全身，從頭頸部出現水泡與紅疹蔓延至軀幹四肢。</p>
+                            </div>
+                            <div class="bg-slate-900/90 p-4 rounded-xl border border-amber-500/40">
+                                <span class="text-xs font-bold px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded">STEP 2 終生潛伏</span>
+                                <h4 class="font-bold text-white mt-2 mb-1">躲入「背根神經節」</h4>
+                                <p class="text-xs text-slate-300">水痘康復後，病毒跑進脊椎的<strong class="text-amber-300">「背根神經節 (Dorsal Root Ganglion)」</strong>永久潛伏，終生留在脊椎神經系統中。</p>
+                            </div>
+                            <div class="bg-slate-900/90 p-4 rounded-xl border border-rose-500/40">
+                                <span class="text-xs font-bold px-2 py-0.5 bg-rose-500/20 text-rose-300 rounded">STEP 3 免疫失守</span>
+                                <h4 class="font-bold text-white mt-2 mb-1">沿皮節爆發神經痛</h4>
+                                <p class="text-xs text-slate-300">當宿主免疫力下降，病毒甦醒並沿著感覺神經軸突一路破壞到皮膚皮節 (Dermatome)，造成劇烈神經發炎。</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            'island-2': {
+                icon: '⚡',
+                subtitle: 'ISLAND 02 ・ 臨床表現、偽裝者與黃金 72 小時',
+                title: '偽裝迷霧島：張震嶽的痛與黃金72小時決策',
+                headerClass: 'border-rose-500/40 bg-gradient-to-r from-slate-900 via-rose-950/40 to-slate-900',
+                footerTip: '切忌點硃砂「斬皮蛇」或貼痠痛貼布！發疹黃金 72 小時內給予抗病毒藥可大幅降低 PHN。',
+                content: `
+                    <div class="bg-gradient-to-r from-rose-950/60 to-slate-900 border border-rose-500/40 rounded-2xl p-5">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <span class="px-2.5 py-0.5 text-xs font-bold bg-rose-500 text-white rounded-full">真實臨床借鏡</span>
+                            <span class="text-xs text-rose-300">「痛到走路一拐一拐、如長芒果！」</span>
+                        </div>
+                        <h3 class="text-lg font-black text-white mb-2">🎸 張震嶽染帶狀皰疹的典型病程三階段</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700">
+                                <div class="font-bold text-amber-300 mb-1">1. 誘發：熬夜＋過度疲勞</div>
+                                <p class="text-slate-300">在日本滑雪與熬夜喝酒，回國後免疫力崩盤。</p>
+                            </div>
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700">
+                                <div class="font-bold text-sky-300 mb-1">2. 前驅：誤認運動痠痛</div>
+                                <p class="text-slate-300">左大腿痠痛以為是滑雪施力不當，幾天後長出紅斑並轉為抽痛。</p>
+                            </div>
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-rose-500/40">
+                                <div class="font-bold text-rose-300 mb-1">3. 爆發：痛覺超敏 (Allodynia)</div>
+                                <p class="text-slate-300">如肌肉遭電擊劇痛，摩擦到褲子也會痛，走路一拐一拐。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-5">
+                            <h4 class="font-black text-white text-base mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-masks-theater text-rose-400"></i> 初期診斷陷阱：疼痛百變偽裝
+                            </h4>
+                            <ul class="space-y-2 text-xs text-slate-200">
+                                <li class="bg-slate-900/70 p-2.5 rounded-lg"><strong class="text-amber-400">腰背：</strong>誤以為閃到腰或椎間盤突出。</li>
+                                <li class="bg-slate-900/70 p-2.5 rounded-lg"><strong class="text-rose-400">腹部：</strong>抽痛常被誤認為急性盲腸炎。</li>
+                                <li class="bg-slate-900/70 p-2.5 rounded-lg"><strong class="text-sky-400">痠痛貼布陷阱：</strong>貼布處起紅點誤以為濕疹，直到水泡擴散才驚覺是皮蛇！</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-5">
+                            <h4 class="font-black text-white text-base mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-bolt text-amber-400"></i> 黃金 72 小時抗病毒與健保給付
+                            </h4>
+                            <p class="text-xs text-slate-300 mb-2">Acyclovir 健保全面給付 7 日療程！若侵犯三叉神經 V1 眼周或薦椎 S2 影響排泄，可使用 Famciclovir / Valaciclovir。</p>
+                            <div class="bg-rose-950/60 border border-rose-500/50 rounded-xl p-3 text-xs text-rose-200">
+                                <strong>絕對禁忌：</strong>嚴禁民俗偏方「點硃砂、畫符」，以免水泡破皮感染蜂窩性組織炎！
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            'island-3': {
+                icon: '👑',
+                subtitle: 'ISLAND 03 ・ 臨床神經痛鎮痛核心樞紐 (Pages 16-23)',
+                title: 'Pregabalin (Lyrica) 核心樞紐：臨床鎮痛核心樞紐',
+                headerClass: 'border-amber-400 bg-gradient-to-r from-amber-950/90 via-yellow-900/50 to-slate-900',
+                footerTip: 'Pregabalin 對 α2-δ 亞基親和力高達 Gabapentin 的 6 倍，且不經肝臟代謝、無 CYP450 交互作用，是神經痛控制的黃金基準！',
+                content: `
+                    <div class="gold-glow-card rounded-2xl p-5 relative overflow-hidden">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="space-y-2 max-w-2xl">
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-300 text-xs font-black">
+                                    <i class="fa-solid fa-medal"></i> 臨床鎮痛核心樞紐・神經病變性疼痛關鍵用藥
+                                </div>
+                                <h3 class="text-xl sm:text-2xl font-black text-white">
+                                    為什麼 <span class="text-amber-400">Pregabalin (Lyrica 利瑞卡)</span> 是對抗頑固神經痛的王牌武器？
+                                </h3>
+                                <p class="text-xs sm:text-sm text-slate-300">
+                                    傳統消炎止痛藥 (NSAIDs) 對神經受損放電束手無策。Pregabalin 精準鎖定中樞與周邊神經興奮源頭，迅速平息電擊與燒灼風暴！
+                                </p>
+                            </div>
+                            <div class="bg-slate-950/90 border border-amber-500/40 rounded-2xl p-4 text-center shrink-0">
+                                <div class="text-xs text-amber-300 font-bold mb-1">α2-δ 鈣離子通道結合親和力</div>
+                                <div class="text-4xl font-black bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent">6 倍！</div>
+                                <div class="text-[11px] text-slate-400 mt-1">顯著超越傳統 Gabapentin</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                            <div class="bg-slate-900/90 border border-amber-500/30 p-3.5 rounded-xl">
+                                <div class="font-black text-amber-400 text-sm mb-1">🎯 1. 阻斷致痛物質釋放</div>
+                                <p class="text-slate-300">高親和力結合 <strong class="text-white">α2-δ 子單元</strong>，減少鈣離子內流，抑制 Glutamate 等致痛傳導物質。</p>
+                            </div>
+                            <div class="bg-slate-900/90 border border-amber-500/30 p-3.5 rounded-xl">
+                                <div class="font-black text-amber-400 text-sm mb-1">⚡ 2. 生體可用率 &gt;90%</div>
+                                <p class="text-slate-300">吸收迅速、劑量反應呈線性關係，快速達到有效止痛濃度。</p>
+                            </div>
+                            <div class="bg-slate-900/90 border border-amber-500/30 p-3.5 rounded-xl">
+                                <div class="font-black text-amber-400 text-sm mb-1">🛡️ 3. 不傷肝、零 CYP450 交互作用</div>
+                                <p class="text-slate-300">不經肝臟代謝，與多重慢性病用藥配伍極為安全。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-5">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                            <h4 class="font-black text-white text-base flex items-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 三大動漫劇場臨床互動模組
+                            </h4>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="switchLyricaTab('tab-conan')" id="btn-tab-conan" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 transition">
+                                    🕵️‍♂️ 柯南：健保適應症
+                                </button>
+                                <button onclick="switchLyricaTab('tab-doraemon')" id="btn-tab-doraemon" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 hover:bg-slate-700 border border-slate-700 transition">
+                                    🔔 哆啦A夢：交互作用
+                                </button>
+                                <button onclick="switchLyricaTab('tab-shinchan')" id="btn-tab-shinchan" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 hover:bg-slate-700 border border-slate-700 transition">
+                                    🖍️ 小新：腎劑量計算機
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- TAB 1: 柯南 -->
+                        <div id="tab-conan" class="space-y-4">
+                            <div class="bg-slate-900/90 border border-amber-500/40 rounded-xl p-4">
+                                <div class="text-xs space-y-1.5">
+                                    <div class="font-black text-amber-300 text-sm">毛利小五郎的哀號：「皮蛇刺痛、糖尿病腳麻，吃普通藥根本沒用！」</div>
+                                    <p class="text-slate-300">健保署針對 Pregabalin 設下<strong class="text-amber-300">「四大適應症」</strong>與<strong class="text-rose-300">「每 3 個月病歷審查機制」</strong>（若疼痛分數未改善須停藥）：</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <div class="bg-slate-900 p-3 rounded-xl border border-amber-500/30">
+                                    <div class="font-black text-amber-400">1. 帶狀皰疹後神經痛 (PHN)</div>
+                                    <p class="text-slate-300">NSAIDs 無效或副作用大者可申請，Max 600mg/day。</p>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
+                                    <div class="font-black text-sky-400">2. 糖尿病周邊神經病變 (DPN)</div>
+                                    <p class="text-slate-300">Pain score ≥ 4 分，Max 300mg/day。</p>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
+                                    <div class="font-black text-pink-400">3. 纖維肌痛症 (Fibromyalgia)</div>
+                                    <p class="text-slate-300">Pain score ≥ 6 分，限特定專科開立，Max 450mg/day。</p>
+                                </div>
+                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
+                                    <div class="font-black text-emerald-400">4. 脊髓損傷神經痛</div>
+                                    <p class="text-slate-300">Pain score ≥ 4 分，Max 600mg/day。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 2: 哆啦A夢 -->
+                        <div id="tab-doraemon" class="hidden space-y-4">
+                            <div class="bg-slate-900/90 border border-sky-500/40 rounded-xl p-4">
+                                <div class="text-xs space-y-1.5">
+                                    <div class="font-black text-sky-300 text-sm">大雄擔心：「吃這顆藥會不會跟感冒藥或慢性病藥相剋？」</div>
+                                    <p class="text-slate-300">哆啦A夢：Pregabalin <strong class="text-white">不經肝臟顯著代謝、不影響 CYP450 酵素</strong>，點擊下方藥品測試：</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                                <button onclick="checkDDI('safe', '口服降血糖藥與胰島素 (Metformin, Insulin)', '完全無交互作用！糖尿病神經痛患者可安心併用。')" class="p-3 rounded-xl bg-slate-900 hover:bg-emerald-950/60 border border-emerald-500/40 text-left transition">
+                                    <div class="font-bold text-emerald-400 mb-1">✅ 糖尿病用藥</div>
+                                    <div class="text-[11px] text-slate-400">Metformin / Insulin</div>
+                                </button>
+                                <button onclick="checkDDI('safe', '利尿劑與心血管用藥 (Furosemide)', '無明顯藥動學交互作用，高齡三高患者配伍安全。')" class="p-3 rounded-xl bg-slate-900 hover:bg-emerald-950/60 border border-emerald-500/40 text-left transition">
+                                    <div class="font-bold text-emerald-400 mb-1">✅ 利尿劑</div>
+                                    <div class="text-[11px] text-slate-400">Furosemide 等</div>
+                                </button>
+                                <button onclick="checkDDI('safe', '其他抗癲癇藥物 (Valproate, Carbamazepine)', '不影響彼此血中濃度，因為不走 CYP450 代謝。')" class="p-3 rounded-xl bg-slate-900 hover:bg-emerald-950/60 border border-emerald-500/40 text-left transition">
+                                    <div class="font-bold text-emerald-400 mb-1">✅ 抗癲癇藥物</div>
+                                    <div class="text-[11px] text-slate-400">Valproate / Carbamazepine</div>
+                                </button>
+                                <button onclick="checkDDI('caution', '酒精 (Ethanol)、安眠鎮靜劑 (Lorazepam) 或強效鴉片類 (Oxycodone)', '⚠️ 警告：與酒精、Lorazepam 或 Oxycodone 併用會有「中樞神經抑制加成效應」，導致嗜睡、運動失調，務必謹慎評估！')" class="p-3 rounded-xl bg-slate-900 hover:bg-rose-950/60 border border-rose-500/50 text-left transition">
+                                    <div class="font-bold text-rose-400 mb-1">⚠️ 酒 / 安眠藥 / 鴉片類</div>
+                                    <div class="text-[11px] text-slate-400">Lorazepam / Oxycodone</div>
+                                </button>
+                            </div>
+                            <div id="ddi-result-box" class="bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-3.5 text-xs text-emerald-200">
+                                💡 <strong>點擊上方藥物按鈕查看哆啦A夢檢測報告：</strong> 預設顯示安全無肝代謝衝突。
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: 小新 -->
+                        <div id="tab-shinchan" class="hidden space-y-4">
+                            <div class="bg-slate-900/90 border border-rose-500/40 rounded-xl p-4">
+                                <div class="text-xs space-y-1.5">
+                                    <div class="font-black text-rose-300 text-sm">野原新之助教你：「因為 Pregabalin 幾乎從腎臟排泄，看肌酸酐清除率 (Clcr) 就能一秒決定劑量！」</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                                <button onclick="selectRenalStage(0)" id="renal-btn-0" class="p-3 rounded-xl bg-amber-500 text-slate-950 font-black transition text-center">
+                                    <div>Clcr ≥ 60</div>
+                                    <div class="text-[11px] opacity-80">健康正常腎</div>
+                                </button>
+                                <button onclick="selectRenalStage(1)" id="renal-btn-1" class="p-3 rounded-xl bg-slate-900 text-slate-300 border border-slate-700 font-bold transition text-center">
+                                    <div>Clcr 30 ~ &lt;60</div>
+                                    <div class="text-[11px] text-slate-400">輕中度衰退</div>
+                                </button>
+                                <button onclick="selectRenalStage(2)" id="renal-btn-2" class="p-3 rounded-xl bg-slate-900 text-slate-300 border border-slate-700 font-bold transition text-center">
+                                    <div>Clcr 15 ~ &lt;30</div>
+                                    <div class="text-[11px] text-slate-400">重度衰退</div>
+                                </button>
+                                <button onclick="selectRenalStage(3)" id="renal-btn-3" class="p-3 rounded-xl bg-slate-900 text-slate-300 border border-slate-700 font-bold transition text-center">
+                                    <div>Clcr &lt; 15</div>
+                                    <div class="text-[11px] text-slate-400">極重度 / 透析</div>
+                                </button>
+                            </div>
+                            <div id="renal-display-card" class="bg-slate-900 border border-amber-500/40 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center text-xs">
+                                <div>
+                                    <div class="text-slate-400">小新狀態台詞</div>
+                                    <div id="renal-quote" class="text-sm font-bold text-amber-300 mt-1">「我是健康的野原新之助！每天最多 450mg (PHN可至600mg)，分兩三次吃都可以喔！」</div>
+                                </div>
+                                <div class="flex justify-around bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
+                                    <div>
+                                        <div class="text-[11px] text-slate-400">起始劑量</div>
+                                        <div id="renal-start" class="text-lg font-black text-sky-400">150 mg/日</div>
+                                    </div>
+                                    <div class="border-r border-slate-800"></div>
+                                    <div>
+                                        <div class="text-[11px] text-slate-400">最大劑量</div>
+                                        <div id="renal-max" class="text-lg font-black text-amber-400">450~600 mg/日</div>
+                                    </div>
+                                </div>
+                                <div class="text-center sm:text-right">
+                                    <div class="text-slate-400">頻率 (Regimen)</div>
+                                    <div id="renal-freq" class="text-base font-black text-emerald-400 mt-0.5">BID 或 TID</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            'island-5': {
+                icon: '⚖️',
+                subtitle: 'ISLAND 04 ・ 疼痛分類與多模式協同治療 (Pages 14-16, 24-25)',
+                title: '藥物迷宮島：疼痛分類與多模式協同治療 (Pregabalin + TCA)',
+                headerClass: 'border-purple-500/40 bg-gradient-to-r from-slate-900 via-purple-950/40 to-slate-900',
+                footerTip: 'Pregabalin 與 TCA 具備互補機轉，臨床上常協同併用以發揮 1+1>2 的多模式止痛效果！',
+                content: `
+                    <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-5">
+                        <h3 class="text-base font-black text-purple-300 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-sitemap"></i> 三大疼痛分類比較
+                        </h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-900 text-slate-300 border-b border-slate-700">
+                                        <th class="p-3">疼痛類型</th>
+                                        <th class="p-3">原因</th>
+                                        <th class="p-3">疼痛性質</th>
+                                        <th class="p-3">標準治療</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800">
+                                    <tr class="bg-slate-900/40">
+                                        <td class="p-3 font-bold text-sky-300">體感性疼痛 (Somatic)</td>
+                                        <td class="p-3">體表、骨骼、肌肉受損</td>
+                                        <td class="p-3">刀刺痛、銳痛、定位明確</td>
+                                        <td class="p-3 text-emerald-300">NSAIDs 反應佳</td>
+                                    </tr>
+                                    <tr class="bg-slate-900/40">
+                                        <td class="p-3 font-bold text-amber-300">內臟性疼痛 (Visceral)</td>
+                                        <td class="p-3">臟器受損、平滑肌痙攣</td>
+                                        <td class="p-3">悶痛、絞痛、定位困難</td>
+                                        <td class="p-3 text-slate-300">鴉片類或解痙藥</td>
+                                    </tr>
+                                    <tr class="bg-amber-950/30 border-l-4 border-amber-400">
+                                        <td class="p-3 font-black text-amber-400">神經病變性疼痛 (Neuropathic)</td>
+                                        <td class="p-3 text-white">神經組織本身受損（帶狀皰疹、糖尿病）</td>
+                                        <td class="p-3 text-white">灼痛、刺痛、<strong class="text-amber-300">電擊痛</strong>、痛覺超敏</td>
+                                        <td class="p-3 font-bold text-amber-300">需合併抗痙攣藥 (Pregabalin) 與抗憂鬱劑 (TCA) 協同治療</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-5">
+                            <h4 class="font-black text-white text-sm mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-stairs text-emerald-400"></i> NEJM 皰疹後神經痛治療階梯
+                            </h4>
+                            <ul class="space-y-2 text-xs text-slate-300">
+                                <li><strong>局部治療：</strong> Capsaicin 軟膏或 Lidocaine 貼片。</li>
+                                <li class="bg-amber-950/40 p-2.5 rounded-lg border border-amber-500/40"><strong class="text-amber-300">中重度全身性第一線核心：</strong> 優先使用 <strong class="text-white">Pregabalin (Lyrica)</strong>。</li>
+                                <li class="bg-purple-950/30 p-2.5 rounded-lg border border-purple-500/40"><strong class="text-purple-300">雙機轉協同併用 (Add-on)：</strong> 臨床常加上三環抗憂鬱劑 (TCA) 互補。</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-800/50 border border-purple-500/30 rounded-2xl p-5">
+                            <h4 class="font-black text-purple-300 text-sm mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-handshake-angle text-purple-400"></i> 三環抗憂鬱劑 (TCA) 協同角色
+                            </h4>
+                            <p class="text-xs text-slate-300 mb-3">
+                                <strong class="text-white">機轉互補：</strong> TCA 抑制正腎上腺素與血清素再回收，<strong class="text-purple-300">強化下行疼痛抑制路徑</strong>。與抑制上行鈣離子通道的 Pregabalin 併用可發揮協同加乘效果！
+                            </p>
+                            <div class="bg-slate-900/80 p-3 rounded-xl text-xs space-y-1.5 text-slate-200">
+                                <div><strong>臨床用藥提醒：</strong> 長者可選用副作用較溫和的 Nortriptyline。若患者合併心血管疾病、青光眼或癲癇等 TCA 禁忌症，則可優先以不經肝代謝、無心臟傳導負擔的 Pregabalin 作為治療主力。</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            'island-4': {
+                icon: '⛷️',
+                subtitle: 'ISLAND 05 ・ 中樞神經敏感化與介入阻斷術 (Pages 26-36)',
+                title: '滑雪道之島：在疼痛變成深谷前，以藥物＋阻斷術填平雪道！',
+                headerClass: 'border-sky-500/40 bg-gradient-to-r from-slate-900 via-sky-950/50 to-slate-900',
+                footerTip: '最新 Meta-analysis 顯示急性期神經阻斷有助減輕急性痛並降低約半數 PHN 發生率，但仍需搭配 Pregabalin 等藥物多模式控制！',
+                content: `
+                    <div class="bg-gradient-to-r from-slate-900 via-sky-950/40 to-slate-900 border border-sky-500/40 rounded-2xl p-5">
+                        <h3 class="text-base sm:text-lg font-black text-white mb-2">⛷️ 疼痛中樞化機轉「滑雪道類比圖」(Wind-up)</h3>
+                        <p class="text-xs text-slate-300 mb-3">若不積極控制，反覆高頻疼痛會活化 NMDA 受體與神經膠細胞，將淺雪道滑成深谷，導致自發性劇痛。治療目標是以 <strong class="text-amber-300">Pregabalin (Lyrica)</strong> 抑制鈣離子通道過度放電，針對頑固疼痛再搭配神經阻斷術合力填平雪道！</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-5 space-y-2.5 text-xs">
+                            <h4 class="font-black text-sky-300 text-base flex items-center justify-between">
+                                <span>🐸 星狀神經節阻斷術 (SGB)</span>
+                                <span class="text-[11px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded">頭頸與上肢</span>
+                            </h4>
+                            <p class="text-slate-300"><strong>解剖靶點：</strong> C7 + T1 交感神經節融合處，臨床常於 <strong>C6 橫突前結節 (Chassaignac tubercle)</strong> 水準施打，藥液注射於頸長肌 (Longus colli) 與氣管前筋膜之間。</p>
+                            <p class="text-slate-300"><strong>超音波導引優勢：</strong> 傳統盲打需 10 mL (0.5% Bupivacaine) 且高達 30% 有血中濃度過高中毒風險；超音波導引可避開頸動脈、椎動脈與甲狀腺下動脈，僅需 <strong class="text-emerald-400">5~6 mL</strong> 局麻藥即可精準阻斷！</p>
+                        </div>
+                        <div class="bg-slate-800/50 border border-emerald-500/30 rounded-2xl p-5 space-y-2.5 text-xs">
+                            <h4 class="font-black text-emerald-300 text-base flex items-center justify-between">
+                                <span>🎯 脊椎旁神經阻斷術 (PVB)</span>
+                                <span class="text-[11px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">2024-2025 最新實證</span>
+                            </h4>
+                            <p class="text-slate-300"><strong>作用機轉 (T1-T12)：</strong> 於橫突與壁層胸膜間注入局麻藥（常合併類固醇），藥液在椎旁空間上下擴散，同時阻斷脊神經背支、腹支（肋間神經）與交感神經鏈。</p>
+                            <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-3 space-y-1.5 text-slate-300">
+                                <div class="font-bold text-amber-300"><i class="fa-solid fa-magnifying-glass-chart mr-1"></i> 最新系統性回顧與統合分析 (Meta-analysis) 實證修正：</div>
+                                <ul class="list-disc pl-4 space-y-1 text-[11px] leading-relaxed">
+                                    <li><strong class="text-white">降低發生率但非絕對預防：</strong> 2025 年最新統合分析（<em>Pain Physician</em> 2025; <em>Front Neurol</em> 2025）指出，在急性期施行超音波導引 PVB 能顯著減輕 4 週內急性疼痛並減少止痛藥消耗，且<strong class="text-emerald-300">有助於降低 3~6 個月後的 PHN 發生風險（RR 約 0.47，風險約減半）</strong>。</li>
+                                    <li><strong class="text-white">客觀限制與替代技術：</strong> 統合分析發現介入組在 <strong>第 12 週的平均疼痛分數 (VAS) 與對照組無顯著差異</strong>，且現有 RCT 樣本數較小、異質性高。此外，近年研究（Ma et al., 2024）顯示<strong>豎脊肌平面阻斷 (ESPB)</strong> 預防 PHN 效果與 PVB 相當（RR 0.52），但安全性更高、氣胸與頭暈風險更低。</li>
+                                    <li><strong class="text-amber-300">臨床定位：</strong> PVB 並非單靠一針即可根絕 PHN，臨床上應優先以抗病毒藥與 <strong class="text-white">Pregabalin</strong> 等口服藥物穩定控制神經放電，針對高風險或藥物控制不良者再輔以超音波導引阻斷術。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            'island-6': {
+                icon: '🔥',
+                subtitle: 'ISLAND 06 ・ 免疫防禦、水痘與帶狀皰疹疫苗對決 (Pages 38-51)',
+                title: '炎柱免疫防禦島：預防水痘就是預防皮蛇！Shingrix vs Zostavax',
+                headerClass: 'border-emerald-500/40 bg-gradient-to-r from-slate-900 via-emerald-950/50 to-slate-900',
+                footerTip: '煉獄杏壽郎總結：50歲以上或18歲以上免疫低下者建議施打帶狀皰疹疫苗；若有 PHN 務必早期以 Pregabalin 控制！',
+                content: `
+                    <div class="bg-slate-800/40 border border-slate-700 rounded-2xl p-5">
+                        <h3 class="text-base font-black text-sky-300 mb-2">🛡️ 水痘疫苗的世代改變與預防</h3>
+                        <p class="text-xs text-slate-300 mb-3">自 2004 年起台灣公費施打水痘疫苗，發生率降低 8 成以上。<strong class="text-emerald-300">預防水痘便是預防帶狀皰疹！</strong>建議 4~6 歲自費追加第 2 劑。</p>
+                    </div>
+                    <div class="bg-slate-800/50 border border-emerald-500/40 rounded-2xl p-5">
+                        <h3 class="text-base font-black text-emerald-300 mb-3">🌟 帶狀皰疹疫苗超級比一比</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-900 text-slate-300 border-b border-slate-700">
+                                        <th class="p-3">比較項目</th>
+                                        <th class="p-3 text-emerald-400 font-black">欣剋疹 Shingrix (GSK)</th>
+                                        <th class="p-3 text-slate-400">伏帶疹 Zostavax (MSD)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800">
+                                    <tr class="bg-emerald-950/20">
+                                        <td class="p-2.5 font-bold">疫苗種類</td>
+                                        <td class="p-2.5 text-white">非活抗原 (基因重組) + 佐劑 ｜ 肌肉 2 劑</td>
+                                        <td class="p-2.5 text-slate-400">活性減毒病毒 ｜ 皮下 1 劑</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2.5 font-bold">免疫低下者</td>
+                                        <td class="p-2.5 text-emerald-300 font-bold">無禁忌 (18歲以上高危人士適用)</td>
+                                        <td class="p-2.5 text-rose-400">禁用 (活性疫苗)</td>
+                                    </tr>
+                                    <tr class="bg-emerald-950/20">
+                                        <td class="p-2.5 font-bold">防禦保護力</td>
+                                        <td class="p-2.5 text-amber-300 font-black">高達 97.2% (7年後仍 &gt;90%)</td>
+                                        <td class="p-2.5 text-slate-400">約 51% (隨時間快速衰退)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openIsland(islandId) {
+            const data = islandsData[islandId];
+            if (!data) return;
+
+            visitedIslands.add(islandId);
+            updateProgressUI(islandId);
+
+            document.getElementById('modal-icon').textContent = data.icon;
+            document.getElementById('modal-subtitle').textContent = data.subtitle;
+            document.getElementById('modal-title').textContent = data.title;
+            document.getElementById('modal-header').className = `px-3.5 py-2.5 sm:px-6 sm:py-4 border-b flex items-center justify-between gap-2 shrink-0 ${data.headerClass}`;
+            
+            const mobileTipBanner = `
+                <div class="md:hidden bg-slate-800/80 border border-emerald-500/30 rounded-xl p-2.5 text-xs text-slate-200 flex items-start gap-2">
+                    <span class="text-base shrink-0">🐸</span>
+                    <div><strong class="text-emerald-400">楊醫師筆記：</strong>${data.footerTip}</div>
+                </div>
+            `;
+            document.getElementById('modal-content').innerHTML = mobileTipBanner + data.content;
+            document.getElementById('modal-footer-tip').textContent = data.footerTip;
+
+            const currentIndex = islandOrder.indexOf(islandId);
+            const prevId = islandOrder[(currentIndex - 1 + islandOrder.length) % islandOrder.length];
+            const nextId = islandOrder[(currentIndex + 1) % islandOrder.length];
+
+            document.getElementById('btn-prev-island').onclick = () => openIsland(prevId);
+            document.getElementById('btn-next-island').onclick = () => openIsland(nextId);
+
+            const modal = document.getElementById('island-modal');
+            modal.classList.remove('hidden');
+            document.getElementById('modal-content').scrollTop = 0;
+        }
+
+        function closeModal() {
+            document.getElementById('island-modal').classList.add('hidden');
+        }
+
+        function updateProgressUI(islandId) {
+            const count = visitedIslands.size;
+            document.getElementById('progress-text').textContent = `${count} / 6`;
+            document.getElementById('progress-bar').style.width = `${(count / 6) * 100}%`;
+
+            const badge = document.getElementById(`badge-${islandId}`);
+            const check = document.getElementById(`check-${islandId}`);
+            if (badge && check) {
+                badge.classList.remove('hidden');
+                check.classList.remove('hidden');
+            }
+        }
+
+        function switchLyricaTab(tabId) {
+            const tabs = ['tab-conan', 'tab-doraemon', 'tab-shinchan'];
+            tabs.forEach(id => {
+                const el = document.getElementById(id);
+                const btn = document.getElementById(`btn-${id}`);
+                if (id === tabId) {
+                    el.classList.remove('hidden');
+                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 transition shadow';
+                } else {
+                    el.classList.add('hidden');
+                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 hover:bg-slate-700 border border-slate-700 transition';
+                }
+            });
+        }
+
+        function checkDDI(status, drugName, message) {
+            const box = document.getElementById('ddi-result-box');
+            if (status === 'safe') {
+                box.className = 'bg-emerald-950/60 border border-emerald-400/60 rounded-xl p-3.5 text-xs text-emerald-100 transition-all';
+                box.innerHTML = `<div class="font-black text-emerald-300 text-sm mb-1">🔔 檢測結果：【安全綠燈】Pregabalin + ${drugName}</div><p>${message}</p>`;
+            } else {
+                box.className = 'bg-rose-950/70 border border-rose-400/70 rounded-xl p-3.5 text-xs text-rose-100 transition-all';
+                box.innerHTML = `<div class="font-black text-rose-300 text-sm mb-1">⚠️ 檢測結果：【中樞加成注意】Pregabalin + ${drugName}</div><p>${message}</p>`;
+            }
+        }
+
+        const renalStages = [
+            {
+                quote: '「我是健康的野原新之助！每天最多 450mg (PHN可至600mg)，分兩三次吃都可以喔！」',
+                start: '150 mg/日',
+                max: '450 (PHN 600) mg/日',
+                freq: 'BID 或 TID'
+            },
+            {
+                quote: '「腎臟有點小問題了 (Clcr 30~60)，每天最多 300mg，還是分兩三次吃，慢慢來～」',
+                start: '75 mg/日',
+                max: '300 mg/日',
+                freq: 'BID 或 TID'
+            },
+            {
+                quote: '「哎呀！腎臟不太靈光 (Clcr 15~30)，每天最多 150mg，只能一天一次或兩次了。」',
+                start: '25 ~ 50 mg/日',
+                max: '150 mg/日',
+                freq: 'QD 或 BID'
+            },
+            {
+                quote: '「腎臟罷工了 (Clcr <15)！每天最多 75mg (QD)。每次血液透析後還要額外補吃 25~150mg 單次劑量喔！」',
+                start: '25 mg/日',
+                max: '75 mg/日 (+透析後補充)',
+                freq: 'QD + 透析後補充'
+            }
+        ];
+
+        function selectRenalStage(index) {
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`renal-btn-${i}`);
+                if (i === index) {
+                    btn.className = 'p-3 rounded-xl bg-amber-500 text-slate-950 font-black transition text-center shadow-lg';
+                } else {
+                    btn.className = 'p-3 rounded-xl bg-slate-900 text-slate-300 border border-slate-700 hover:bg-slate-800 font-bold transition text-center';
+                }
+            }
+            const stage = renalStages[index];
+            document.getElementById('renal-quote').textContent = stage.quote;
+            document.getElementById('renal-start').textContent = stage.start;
+            document.getElementById('renal-max').textContent = stage.max;
+            document.getElementById('renal-freq').textContent = stage.freq;
+        }
+
+        const quizQuestions = [
+            {
+                q: '1. 關於第一線神經痛治療藥物 Pregabalin (Lyrica) 與三環抗憂鬱劑 (TCA) 的臨床應用，下列敘述何者最正確？',
+                options: [
+                    'A. Pregabalin 需經由肝臟 CYP450 酵素大量代謝，因此不能與其他藥物併用',
+                    'B. Pregabalin 對鈣離子通道 α2-δ 子單元親和力比 Gabapentin 高出 6 倍，且在臨床上可與強化下行抑制路徑的 TCA 發揮機轉互補、協同止痛',
+                    'C. 三環抗憂鬱劑 (TCA) 完全沒有抗膽鹼作用，因此青光眼與嚴重心臟病患者可優先高劑量使用',
+                    'D. 健保給付 Pregabalin 於帶狀皰疹後神經痛 (PHN) 的每日最大劑量上限為 150 mg'
+                ],
+                ans: 1,
+                exp: '正確答案為 B！Pregabalin 對 α2-δ 親和力高出 Gabapentin 6 倍，不經肝代謝；若單藥反應不足，臨床上常可與作用於下行疼痛抑制路徑的 TCA 協同併用。'
+            },
+            {
+                q: '2. 根據健保給付規定，使用 Pregabalin 治療神經痛時的定期追蹤機制為何？',
+                options: [
+                    'A. 不需要任何病歷記載',
+                    'B. 必須先使用過傳統止痛藥證明無效或副作用大，且每 3 個月需評估並記載疼痛分數，若未改善則停止給付',
+                    'C. 終生只能開立 7 天',
+                    'D. 只給付於感冒引起的頭痛'
+                ],
+                ans: 1,
+                exp: '正確答案為 B！健保規定必須先經第一線傳統止痛藥無效，且每 3 個月定期評估記載疼痛分數變化。'
+            },
+            {
+                q: '3. 關於星狀神經節阻斷術 (SGB)，下列何者正確？',
+                options: [
+                    'A. 盲打 SGB 10 mL 完全不會有中毒風險',
+                    'B. 超音波導引 SGB 只需 5~6 mL 局麻藥即可精準阻斷，安全又高效',
+                    'C. 星狀神經節是由 C1 與 C2 神經節融合而成',
+                    'D. 民俗療法「點硃砂斬皮蛇」能有效阻斷交感神經'
+                ],
+                ans: 1,
+                exp: '正確答案為 B！傳統盲打 10 mL 有較高中毒風險；星狀神經節為 C7+T1 融合，超音波導引僅需 5-6 mL 即可安全阻斷！'
+            }
+        ];
+
+        function openQuizModal() {
+            const container = document.getElementById('quiz-body');
+            container.innerHTML = quizQuestions.map((item, qIdx) => `
+                <div class="bg-slate-800/70 border border-slate-700 rounded-2xl p-4 space-y-3">
+                    <div class="font-bold text-sm text-white">${item.q}</div>
+                    <div class="space-y-2">
+                        ${item.options.map((opt, oIdx) => `
+                            <button onclick="answerQuiz(${qIdx}, ${oIdx})" id="q-${qIdx}-opt-${oIdx}" class="w-full text-left p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs text-slate-200 transition">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="q-${qIdx}-exp" class="hidden p-3 rounded-xl text-xs"></div>
+                </div>
+            `).join('');
+            document.getElementById('quiz-modal').classList.remove('hidden');
+        }
+
+        function answerQuiz(qIdx, selectedIdx) {
+            const item = quizQuestions[qIdx];
+            const expBox = document.getElementById(`q-${qIdx}-exp`);
+            expBox.classList.remove('hidden');
+
+            item.options.forEach((_, oIdx) => {
+                const btn = document.getElementById(`q-${qIdx}-opt-${oIdx}`);
+                if (oIdx === item.ans) {
+                    btn.className = 'w-full text-left p-3 rounded-xl bg-emerald-950/80 border-2 border-emerald-400 text-xs text-emerald-200 font-bold';
+                } else if (oIdx === selectedIdx) {
+                    btn.className = 'w-full text-left p-3 rounded-xl bg-rose-950/80 border border-rose-500 text-xs text-rose-300';
+                }
+            });
+
+            if (selectedIdx === item.ans) {
+                expBox.className = 'p-3 rounded-xl text-xs bg-emerald-950/50 border border-emerald-500/40 text-emerald-200';
+                expBox.innerHTML = `🎉 <strong>答對了！</strong> ${item.exp}`;
+            } else {
+                expBox.className = 'p-3 rounded-xl text-xs bg-amber-950/50 border border-amber-500/40 text-amber-200';
+                expBox.innerHTML = `💡 <strong>解析：</strong> ${item.exp}`;
+            }
+        }
+
+        function closeQuizModal() {
+            document.getElementById('quiz-modal').classList.add('hidden');
+        }
+
+        document.getElementById('island-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        document.getElementById('quiz-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeQuizModal();
+        });
+    </script>
+</body>
+</html>
